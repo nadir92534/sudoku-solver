@@ -9,9 +9,21 @@ if __name__ == '__main__':
 
     cases = sudoku.extract_cases_info()
 
-    prob_cases = Case.calculate_probabilities(cases)
-    for case in prob_cases:
-        print(case)
+    while True:
+        undefined_cases = len(Case.get_undefined_cases(cases))
+        if undefined_cases != 0:
+            print(str(undefined_cases) + " wait to go")
+        else:
+            break
+
+        cases = Case.calculate_probabilities(cases)
+        try:
+            cases = Case.solve_one(cases)
+        except Exception as e:
+            failed_state = Sudoku.convert_to_sudoku(cases)
+            print("State before error ")
+            failed_state.print_board()
+            raise Exception(f"Failed with error {str(e)}")
 
     sudoku_solution = Sudoku.convert_to_sudoku(cases)
     print(sudoku_solution)
