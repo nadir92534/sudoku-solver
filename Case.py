@@ -1,4 +1,5 @@
 import json
+import random
 
 
 class Probabilities:
@@ -44,8 +45,10 @@ class Case:
                 prob = Probabilities(number, times_shown)
                 probabilities.append(prob)
 
+            random.shuffle(probabilities)
             case.probabilities = probabilities
 
+        random.shuffle(cases)
         return cases
 
     @staticmethod
