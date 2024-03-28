@@ -5,8 +5,10 @@ class Sudoku:
         """
         :param seed: sudoku input
         """
+        self.dimension = 9
+
         try:
-            self.seed_json = json.loads(seed)
+            self.rows = json.loads(seed)
         except json.decoder.JSONDecodeError:
             raise Exception('Json Error decoding the soduku')
 
@@ -14,31 +16,50 @@ class Sudoku:
         if not valid:
             raise Exception('Invalid sudoku. '+reason)
 
-        self.square_structs = self.get_square_structs()
-        print(self.square_structs)
+        # self.square_structs = self.get_square_structs()
+        # print(self.square_structs)
 
-    def get_square_structs(self):
-        structs = []
-        struct_start = 0
+    def print_board(self):
+        print("+" + "--" * self.dimension + "-+")  # delimiter
 
-        for i in range(9):
-            structs.append([])
+        for i, line in enumerate(self.rows):
+            output_line = ""
 
-        for row_i, row in enumerate(self.rows):
-            if row_i > 2:
-                struct_start = 3
-            if row_i > 5:
-                struct_start = 6
+            for j, item in enumerate(line):
+                output_line += item + " "
 
-            for item_i, item in enumerate(row):
-                if item_i < 3:
-                    structs[struct_start].append()
+                if j in [2, 5]:
+                    output_line += "  "
+
+            if i in [2, 5]:
+                output_line += "\n"
+
+            print(output_line.replace(".", "_"))
+
+        print(f"\nSudoku {self.dimension}x{self.dimension}")
+
+    # def get_square_structs(self):
+    #     structs = []
+    #     struct_start = 0
+    #
+    #     for i in range(9):
+    #         structs.append([])
+    #
+    #     for row_i, row in enumerate(self.rows):
+    #         if row_i > 2:
+    #             struct_start = 3
+    #         if row_i > 5:
+    #             struct_start = 6
+    #
+    #         for item_i, item in enumerate(row):
+    #             if item_i < 3:
+    #                 structs[struct_start].append()
+    #
+    #     return structs
 
     def verify(self):
-        if not isinstance(self.seed_json, list):
+        if not isinstance(self.rows, list):
             return False, 'Provided is not a list'
-
-        self.rows = self.seed_json
 
         if len(self.rows) != 9:
             return False, 'Sudoku doesn\'t match 9 length requirement'
@@ -57,4 +78,7 @@ class Sudoku:
         return True, 'Successful'
 
 if __name__ == '__main__':
-    sudo = Sudoku('[["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]')
+    sudostr = '[["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]'
+
+    sudoku = Sudoku(sudostr)
+    sudoku.print_board()
