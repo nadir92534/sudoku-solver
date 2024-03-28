@@ -1,5 +1,14 @@
 import json
 
+class Case:
+    def __init__(self, row_id, column_id, square_id):
+        self.row_id = row_id
+        self.column_id = column_id
+        self.square_id = square_id
+
+    def __str__(self):
+        return f"Case | Row: {self.row_id} | Column: {self.column_id} | Square: {self.square_id}"
+
 class Sudoku:
     def __init__(self, seed):
         """
@@ -16,8 +25,32 @@ class Sudoku:
         if not valid:
             raise Exception('Invalid sudoku. '+reason)
 
-        # self.square_structs = self.get_square_structs()
-        # print(self.square_structs)
+        self.cases = self.extract_cases_info()
+
+    def extract_cases_info(self):
+        cases = []
+
+        for row_id, row in enumerate(self.rows):
+            for col_id, item in enumerate(row):
+
+                square_id = -1
+                if col_id < 3:
+                    square_id = 1
+                elif col_id < 6:
+                    square_id = 2
+                else:
+                    square_id = 3
+
+                if row_id > 2:
+                    square_id += 3
+
+                if row_id > 5:
+                    square_id += 3
+
+                case = Case(row_id, col_id, square_id)
+                cases.append(case)
+
+        return cases
 
     def print_board(self):
         print("+" + "--" * self.dimension + "-+")  # delimiter
@@ -37,25 +70,6 @@ class Sudoku:
             print(output_line.replace(".", "_"))
 
         print(f"\nSudoku {self.dimension}x{self.dimension}")
-
-    # def get_square_structs(self):
-    #     structs = []
-    #     struct_start = 0
-    #
-    #     for i in range(9):
-    #         structs.append([])
-    #
-    #     for row_i, row in enumerate(self.rows):
-    #         if row_i > 2:
-    #             struct_start = 3
-    #         if row_i > 5:
-    #             struct_start = 6
-    #
-    #         for item_i, item in enumerate(row):
-    #             if item_i < 3:
-    #                 structs[struct_start].append()
-    #
-    #     return structs
 
     def verify(self):
         if not isinstance(self.rows, list):
