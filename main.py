@@ -1,13 +1,27 @@
 import json
 
 class Case:
-    def __init__(self, row_id, column_id, square_id):
+    def __init__(self, value, row_id, col_id, square_id):
+        self.value = value
         self.row_id = row_id
-        self.column_id = column_id
+        self.col_id = col_id
         self.square_id = square_id
 
+    @staticmethod
+    def convert_to_sudoku(cases):
+        rows = []
+        for i_row in range(9):
+            row = []
+            for j_col in range(9):
+                case = [x for x in cases if x.row_id == i_row and x.col_id == j_col][0]
+                row.append(case.value or ".")
+            rows.append(row)
+
+        return str(json.dumps(rows)).replace(" ", "")
+
+
     def __str__(self):
-        return f"Case | Row: {self.row_id} | Column: {self.column_id} | Square: {self.square_id}"
+        return f"Case {self.value if self.value else '?'} | Row: {self.row_id} | Column: {self.col_id} | Square: {self.square_id}"
 
 class Sudoku:
     def __init__(self, seed):
@@ -24,8 +38,6 @@ class Sudoku:
         valid, reason = self.verify()
         if not valid:
             raise Exception('Invalid sudoku. '+reason)
-
-        self.cases = self.extract_cases_info()
 
     def extract_cases_info(self):
         cases = []
@@ -47,8 +59,9 @@ class Sudoku:
                 if row_id > 5:
                     square_id += 3
 
-                case = Case(row_id, col_id, square_id)
+                case = Case(item if not item == "." else None, row_id, col_id, square_id)
                 cases.append(case)
+                # print(case)
 
         return cases
 
@@ -93,6 +106,10 @@ class Sudoku:
 
 if __name__ == '__main__':
     sudostr = '[["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]'
-
+    print(sudostr)
     sudoku = Sudoku(sudostr)
     sudoku.print_board()
+
+    cases = sudoku.extract_cases_info()
+    sudoku_solution = Case.convert_to_sudoku(cases)
+    print(sudoku_solution)
